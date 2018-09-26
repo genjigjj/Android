@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (C) 2017 MINDORKS NEXTGEN PRIVATE LIMITED
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     https://mindorks.com/license/apache-v2
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License
+  -->
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group
+        android:id="@+id/nav_group1"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_menu_home"
+            android:title="主页" />
+
+        <item
+            android:id="@+id/nav_favourite"
+            android:checkable="false"
+            android:icon="@drawable/ic_menu_star"
+            android:title="收藏夹" />
+    </group>
+
+    <group
+        android:id="@+id/nav_group2"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_released"
+            android:icon="@drawable/ic_menu_released"
+            android:title="已发布" />
+        <item
+            android:id="@+id/nav_popular"
+            android:icon="@drawable/ic_menu_popular"
+            android:title="热门" />
+        <item
+            android:id="@+id/nav_actresses"
+            android:icon="@drawable/ic_menu_actresses"
+            android:title="女优" />
+        <item
+            android:id="@+id/nav_genre"
+            android:icon="@drawable/ic_menu_genre"
+            android:title="类别" />
+    </group>
+
+
+</menu>
