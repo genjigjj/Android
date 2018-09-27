@@ -19,6 +19,7 @@ package com.gjj.avgle.di.component;
 import com.gjj.avgle.di.PerActivity;
 import com.gjj.avgle.di.module.ActivityModule;
 import com.gjj.avgle.ui.main.MainActivity;
+import com.gjj.avgle.ui.play.PlayActivity;
 import com.gjj.avgle.ui.video.VideoFragment;
 
 import dagger.Component;
@@ -34,4 +35,6 @@ public interface ActivityComponent {
     void inject(MainActivity activity);
 
     void inject(VideoFragment fragment);
+
+    void inject(PlayActivity activity);
 }

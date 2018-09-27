@@ -38,7 +38,7 @@ public class VideoPresenter<V extends VideoMvpView> extends BasePresenter<V> imp
 
     private void getData(int pageNo) {
         getCompositeDisposable().add(getAppApiHelper()
-                .getVideos(String.valueOf(pageNo))
+                .getVideos(pageNo)
                 .subscribeOn(getSchedulerProvider().io())
                 .observeOn(getSchedulerProvider().ui())
                 .subscribe(response -> {

@@ -15,13 +15,16 @@
 
 package com.gjj.avgle.net;
 
+import com.gjj.avgle.net.api.AvgleServiceApi;
 import com.gjj.avgle.net.model.VideoResponse;
-import com.rx2androidnetworking.Rx2AndroidNetworking;
+import com.google.gson.Gson;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.reactivex.Single;
+import io.reactivex.Observable;
+import okhttp3.ResponseBody;
+import retrofit2.Response;
 
 /**
  * Created by janisharali on 28/01/17.
@@ -30,20 +33,25 @@ import io.reactivex.Single;
 @Singleton
 public class AppApiHelper implements ApiHelper {
 
+    private AvgleServiceApi avgleServiceApi;
+
+    private Gson gson;
 
     @Inject
-    public AppApiHelper(){
+    public AppApiHelper(AvgleServiceApi avgleServiceApi, Gson gson) {
+        this.avgleServiceApi = avgleServiceApi;
+        this.gson = gson;
     }
 
 
     @Override
-    public Single<VideoResponse> getVideos(String pageNo) {
-        return Rx2AndroidNetworking.get(ApiConstant.VIDEOS)
-                .addPathParameter("pageNo",pageNo)
-                .addQueryParameter("limit","10")
-                .build()
-                .getObjectSingle(VideoResponse.class);
+    public Observable<VideoResponse> getVideos(int page) {
+        return avgleServiceApi.getVideos(page);
     }
 
+    @Override
+    public Observable<Response<ResponseBody>> getPlayVideoUrl(String url) {
+        return avgleServiceApi.getPlayVideoUrl(url);
+    }
 }
 

@@ -15,8 +15,8 @@
 
 package com.gjj.avgle.ui.video;
 
+import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -31,8 +31,10 @@ import com.bumptech.glide.Glide;
 import com.gjj.avgle.R;
 import com.gjj.avgle.net.model.Video;
 import com.gjj.avgle.ui.base.BaseViewHolder;
+import com.gjj.avgle.ui.play.PlayActivity;
 
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -51,6 +53,8 @@ public class VideoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     private List<Video> videoList;
 
+    private Context context;
+
     public VideoAdapter(List<Video> videoList) {
         this.videoList = videoList;
     }
@@ -66,6 +70,7 @@ public class VideoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     @Override
     public BaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        this.context = parent.getContext();
         return new ViewHolder(
                 LayoutInflater.from(parent.getContext()).inflate(R.layout.item_video_view, parent, false));
         /*switch (viewType) {
@@ -98,13 +103,17 @@ public class VideoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     }
 
     public void addItems(List<Video> videoList) {
-        this.videoList.addAll(videoList);
-        notifyDataSetChanged();
+        if (videoList != null && videoList.size() > 0) {
+            int position = getItemCount();
+            this.videoList.addAll(videoList);
+            notifyItemRangeChanged(position, videoList.size());
+        }
     }
 
-    public void refreshItems() {
+    public void reset() {
+        int size = getItemCount();
         this.videoList.clear();
-        notifyDataSetChanged();
+        notifyItemRangeRemoved(0, size);
     }
 
     public interface Callback {
@@ -119,14 +128,14 @@ public class VideoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         @BindView(R.id.title_text_view)
         TextView titleTextView;
 
-        @BindView(R.id.author_text_view)
-        TextView authorTextView;
+        @BindView(R.id.duration_text_view)
+        TextView durationTextView;
 
         @BindView(R.id.date_text_view)
         TextView dateTextView;
-
+/*
         @BindView(R.id.content_text_view)
-        TextView contentTextView;
+        TextView contentTextView;*/
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -137,7 +146,7 @@ public class VideoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         protected void clear() {
             coverImageView.setImageDrawable(null);
             titleTextView.setText("");
-            contentTextView.setText("");
+            //contentTextView.setText("");
         }
 
         @Override
@@ -155,27 +164,20 @@ public class VideoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                         titleTextView.setText(video.getTitle());
                     }
 
-                    if (video.getKeyword() != null) {
-                        authorTextView.setText(video.getKeyword());
-                    }
+                    durationTextView.setText(String.valueOf(video.getDuration()));
 
                     dateTextView.setText(String.valueOf(video.getAddtime()));
 
                 }
 
-                itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (video.getEmbedded_url() != null) {
-                            try {
-                                Intent intent = new Intent();
-                                intent.setAction(Intent.ACTION_VIEW);
-                                intent.addCategory(Intent.CATEGORY_BROWSABLE);
-                                intent.setData(Uri.parse(video.getEmbedded_url()));
-                                itemView.getContext().startActivity(intent);
-                            } catch (Exception e) {
-                                Log.d("url error", e.getMessage());
-                            }
+                itemView.setOnClickListener((View v) -> {
+                    if (Objects.requireNonNull(video).getVid() != null) {
+                        try {
+                            Intent intent = new Intent(itemView.getContext(), PlayActivity.class);
+                            intent.putExtra("vid", video.getVid());
+                            context.startActivity(intent);
+                        } catch (Exception e) {
+                            Log.d("url error", e.getMessage());
                         }
                     }
                 });

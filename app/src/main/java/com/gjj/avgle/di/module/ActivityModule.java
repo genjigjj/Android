@@ -26,6 +26,9 @@ import com.gjj.avgle.net.model.Video;
 import com.gjj.avgle.ui.main.MainMvpPresenter;
 import com.gjj.avgle.ui.main.MainMvpView;
 import com.gjj.avgle.ui.main.MainPresenter;
+import com.gjj.avgle.ui.play.PlayMvpPresenter;
+import com.gjj.avgle.ui.play.PlayMvpView;
+import com.gjj.avgle.ui.play.PlayPresenter;
 import com.gjj.avgle.ui.video.VideoAdapter;
 import com.gjj.avgle.ui.video.VideoMvpPresenter;
 import com.gjj.avgle.ui.video.VideoMvpView;
@@ -86,6 +89,12 @@ public class ActivityModule {
     @Provides
     VideoMvpPresenter<VideoMvpView> providevideoPresenter(
             VideoPresenter<VideoMvpView> presenter) {
+        return presenter;
+    }
+
+    @Provides
+    @PerActivity
+    PlayMvpPresenter<PlayMvpView> providePlayPresenter(PlayPresenter<PlayMvpView> presenter) {
         return presenter;
     }
 

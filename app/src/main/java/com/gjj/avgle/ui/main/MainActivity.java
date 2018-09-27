@@ -18,7 +18,6 @@ package com.gjj.avgle.ui.main;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -229,27 +228,24 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         //默认选择第一项
         MenuItem selectedItem = mNavigationView.getMenu().findItem(R.id.nav_home);
         mNavigationView.setCheckedItem(selectedItem.getItemId());
-        changeTitle(R.string.home);
+        mPresenter.onDrawerHomeClick(R.string.home);
         mNavigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        mDrawer.closeDrawer(GravityCompat.START);
-                        switch (item.getItemId()) {
-                            case R.id.nav_home:
-                                mPresenter.onDrawerHomeClick(R.string.home);
-                            case R.id.nav_released:
-                                mPresenter.onDrawerOptionAboutClick();
-                                return true;
-                            case R.id.nav_actresses:
-                                mPresenter.onDrawerRateUsClick();
-                                return true;
-                            case R.id.nav_favourite:
-                                mPresenter.onDrawerMyFeedClick();
-                                return true;
-                            default:
-                                return false;
-                        }
+                item -> {
+                    mDrawer.closeDrawer(GravityCompat.START);
+                    switch (item.getItemId()) {
+                        case R.id.nav_home:
+                            mPresenter.onDrawerHomeClick(R.string.home);
+                        case R.id.nav_released:
+                            mPresenter.onDrawerOptionAboutClick();
+                            return true;
+                        case R.id.nav_actresses:
+                            mPresenter.onDrawerRateUsClick();
+                            return true;
+                        case R.id.nav_favourite:
+                            mPresenter.onDrawerMyFeedClick();
+                            return true;
+                        default:
+                            return false;
                     }
                 });
     }

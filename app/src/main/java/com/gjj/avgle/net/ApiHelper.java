@@ -17,7 +17,9 @@ package com.gjj.avgle.net;
 
 import com.gjj.avgle.net.model.VideoResponse;
 
-import io.reactivex.Single;
+import io.reactivex.Observable;
+import okhttp3.ResponseBody;
+import retrofit2.Response;
 
 /**
  * Created by janisharali on 27/01/17.
@@ -26,6 +28,8 @@ import io.reactivex.Single;
 public interface ApiHelper {
 
 
-    Single<VideoResponse> getVideos(String pageNo);
+    Observable<VideoResponse> getVideos(int pageNo);
+
+    Observable<Response<ResponseBody>> getPlayVideoUrl(String url);
 
 }

@@ -118,7 +118,7 @@ public class VideoFragment extends BaseFragment implements VideoMvpView {
 
     @Override
     public void refreshVideo() {
-        videoAdapter.refreshItems();
+        videoAdapter.reset();
         mRefreshLayout.setRefreshing(false);
     }
 }

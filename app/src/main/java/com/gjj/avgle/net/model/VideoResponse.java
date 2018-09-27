@@ -23,7 +23,7 @@ public class VideoResponse {
 
     private boolean success;
 
-    private Response response;
+    private AvgleResponse response;
 
     public boolean isSuccess() {
         return success;
@@ -33,11 +33,11 @@ public class VideoResponse {
         this.success = success;
     }
 
-    public Response getResponse() {
+    public AvgleResponse getResponse() {
         return response;
     }
 
-    public void setResponse(Response response) {
+    public void setResponse(AvgleResponse response) {
         this.response = response;
     }
 

@@ -2,7 +2,7 @@ package com.gjj.avgle.net.model;
 
 import java.util.List;
 
-public class Response {
+public class AvgleResponse {
     private boolean has_more;
     private int total_videos;
     private int current_offset;

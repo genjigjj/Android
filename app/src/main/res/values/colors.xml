@@ -37,4 +37,6 @@
     <color name="google_red">#ea4335</color>
     <color name="google_yellow">#fbbc05</color>
     <color name="google_green">#34a853</color>
+    <color name="common_background">#F4F5F7</color>
+
 </resources>

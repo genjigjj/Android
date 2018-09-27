@@ -22,11 +22,18 @@ import com.gjj.avgle.R;
 import com.gjj.avgle.di.ApplicationContext;
 import com.gjj.avgle.net.ApiHelper;
 import com.gjj.avgle.net.AppApiHelper;
+import com.gjj.avgle.net.api.AvgleServiceApi;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import okhttp3.OkHttpClient;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 /**
@@ -66,5 +73,28 @@ public class ApplicationModule {
                 .setDefaultFontPath("fonts/source-sans-pro/SourceSansPro-Regular.ttf")
                 .setFontAttrId(R.attr.fontPath)
                 .build();
+    }
+
+    @Singleton
+    @Provides
+    Retrofit providesRetrofit() {
+        return new Retrofit.Builder()
+                .client(new OkHttpClient())
+                .baseUrl("https://api.avgle.com/")
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+    }
+
+    @Singleton
+    @Provides
+    AvgleServiceApi providesAvgleServiceApi(Retrofit retrofit) {
+        return retrofit.create(AvgleServiceApi.class);
+    }
+
+    @Singleton
+    @Provides
+    Gson providesGson() {
+        return new GsonBuilder().create();
     }
 }
