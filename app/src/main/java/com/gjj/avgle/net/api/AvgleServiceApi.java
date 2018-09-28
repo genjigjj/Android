@@ -11,7 +11,7 @@ import retrofit2.http.Url;
 
 public interface AvgleServiceApi {
 
-    @GET("v1/videos/{page}")
+    @GET("v1/videos/{page}?limit=10")
     Observable<VideoResponse> getVideos(@Path("page") int page);
 
     /**

@@ -3,7 +3,6 @@ package com.gjj.avgle.ui.play;
 import android.content.Context;
 import android.util.Log;
 
-import com.androidnetworking.error.ANError;
 import com.awesapp.isafe.svs.parsers.PSVS21;
 import com.gjj.avgle.di.ApplicationContext;
 import com.gjj.avgle.net.ApiHelper;
@@ -40,7 +39,6 @@ public class PlayPresenter<V extends PlayMvpView> extends BasePresenter<V> imple
                     .subscribeOn(getSchedulerProvider().io())
                     .observeOn(getSchedulerProvider().ui())
                     .subscribe(response -> {
-                        Log.d("response", response.toString());
                         if (!isViewAttached()) {
                             getMvpView().hideLoading();
                             return;
@@ -51,14 +49,7 @@ public class PlayPresenter<V extends PlayMvpView> extends BasePresenter<V> imple
                             getMvpView().playVideo(videoUrl);
                         }
                     }, throwable -> {
-                        if (!isViewAttached()) {
-                            return;
-                        }
-                        // handle the login error here
-                        if (throwable instanceof ANError) {
-                            ANError anError = (ANError) throwable;
-                            handleApiError(anError);
-                        }
+                        getMvpView().onError("获取视频地址失败");
                     }));
         }
     }

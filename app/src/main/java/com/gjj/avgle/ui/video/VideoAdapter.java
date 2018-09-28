@@ -71,9 +71,7 @@ public class VideoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     @Override
     public BaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         this.context = parent.getContext();
-        return new ViewHolder(
-                LayoutInflater.from(parent.getContext()).inflate(R.layout.item_video_view, parent, false));
-        /*switch (viewType) {
+        switch (viewType) {
             case VIEW_TYPE_NORMAL:
                 return new ViewHolder(
                         LayoutInflater.from(parent.getContext()).inflate(R.layout.item_video_view, parent, false));
@@ -81,7 +79,7 @@ public class VideoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             default:
                 return new EmptyViewHolder(
                         LayoutInflater.from(parent.getContext()).inflate(R.layout.item_empty_view, parent, false));
-        }*/
+        }
     }
 
     @Override
@@ -111,9 +109,7 @@ public class VideoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     }
 
     public void reset() {
-        int size = getItemCount();
         this.videoList.clear();
-        notifyItemRangeRemoved(0, size);
     }
 
     public interface Callback {
@@ -133,9 +129,6 @@ public class VideoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
         @BindView(R.id.date_text_view)
         TextView dateTextView;
-/*
-        @BindView(R.id.content_text_view)
-        TextView contentTextView;*/
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -146,7 +139,6 @@ public class VideoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         protected void clear() {
             coverImageView.setImageDrawable(null);
             titleTextView.setText("");
-            //contentTextView.setText("");
         }
 
         @Override
@@ -157,8 +149,6 @@ public class VideoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                 if (video != null) {
                     Glide.with(itemView.getContext())
                             .load(video.getPreview_url())
-                            .asBitmap()
-                            .centerCrop()
                             .into(coverImageView);
                     if (video.getTitle() != null) {
                         titleTextView.setText(video.getTitle());

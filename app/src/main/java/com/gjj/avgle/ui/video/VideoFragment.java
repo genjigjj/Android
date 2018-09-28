@@ -3,12 +3,9 @@ package com.gjj.avgle.ui.video;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +14,10 @@ import com.gjj.avgle.R;
 import com.gjj.avgle.di.component.ActivityComponent;
 import com.gjj.avgle.net.model.Video;
 import com.gjj.avgle.ui.base.BaseFragment;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
+import com.scwang.smartrefresh.layout.footer.BallPulseFooter;
+import com.scwang.smartrefresh.layout.header.BezierRadarHeader;
 
 import java.util.List;
 
@@ -25,7 +26,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class VideoFragment extends BaseFragment implements VideoMvpView {
+public class VideoFragment extends BaseFragment implements VideoMvpView,VideoAdapter.Callback {
 
     public static final String TAG = "VideoFragment";
 
@@ -39,7 +40,7 @@ public class VideoFragment extends BaseFragment implements VideoMvpView {
     RecyclerView mRecyclerView;
 
     @BindView(R.id.refresh_layout)
-    protected SwipeRefreshLayout mRefreshLayout;
+    protected RefreshLayout refreshLayout;
 
     @Inject
     VideoMvpPresenter<VideoMvpView> videoMvpPresenter;
@@ -63,6 +64,7 @@ public class VideoFragment extends BaseFragment implements VideoMvpView {
             component.inject(this);
             setUnBinder(ButterKnife.bind(this, view));
             videoMvpPresenter.onAttach(this);
+            videoAdapter.setCallback(this);
         }
         return view;
     }
@@ -70,12 +72,10 @@ public class VideoFragment extends BaseFragment implements VideoMvpView {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mRefreshLayout.setColorSchemeColors(
-                ContextCompat.getColor(this.getContext(), R.color.google_blue),
-                ContextCompat.getColor(this.getContext(), R.color.google_green),
-                ContextCompat.getColor(this.getContext(), R.color.google_red),
-                ContextCompat.getColor(this.getContext(), R.color.google_yellow)
-        );
+        //设置 Header 为 贝塞尔雷达 样式
+        refreshLayout.setRefreshHeader(new BezierRadarHeader(getContext()).setEnableHorizontalDrag(true));
+        //设置 Footer 为 球脉冲 样式
+        refreshLayout.setRefreshFooter(new BallPulseFooter(getContext()).setSpinnerStyle(SpinnerStyle.Scale));
     }
 
     @Override
@@ -83,25 +83,12 @@ public class VideoFragment extends BaseFragment implements VideoMvpView {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(videoAdapter);
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-                if (layoutManager instanceof LinearLayoutManager) {
-                    mLastVisibleItemPosition = ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
-                }
-                if (videoAdapter != null) {
-                    if (newState == RecyclerView.SCROLL_STATE_IDLE
-                            && mLastVisibleItemPosition + 1 == videoAdapter.getItemCount()) {
-                        //发送网络请求获取更多数据
-                        Log.d(TAG, "position: "+(mLastVisibleItemPosition + 1) / 10 );
-                        videoMvpPresenter.sendMoreRequest((mLastVisibleItemPosition + 1) / 10);
-                    }
-                }
-            }
+        refreshLayout.setOnRefreshListener(refreshLayout -> {
+            videoAdapter.reset();
+            videoMvpPresenter.refreshVideo();
         });
-        mRefreshLayout.setOnRefreshListener(() -> videoMvpPresenter.refresh());
-        videoMvpPresenter.onViewPrepared();
+        refreshLayout.setOnLoadMoreListener(refreshLayout -> videoMvpPresenter.loadMoreVideo((videoAdapter.getItemCount()) / 10));
+        videoMvpPresenter.showVideo();
     }
 
 
@@ -112,13 +99,35 @@ public class VideoFragment extends BaseFragment implements VideoMvpView {
     }
 
     @Override
-    public void updateVideo(List<Video> videoList) {
+    public void resetAdapter() {
+        videoAdapter.reset();
+    }
+
+    @Override
+    public void addItem(List<Video> videoList) {
         videoAdapter.addItems(videoList);
     }
 
     @Override
-    public void refreshVideo() {
+    public void finishLoadMore() {
+        refreshLayout.finishLoadMore();
+    }
+
+    @Override
+    public void finishRefresh() {
+        refreshLayout.finishRefresh();
+    }
+
+    @Override
+    public void onBlogEmptyViewRetryClick() {
+        videoMvpPresenter.refreshVideo();
+    }
+
+    @Override
+    public void onError(String message) {
+        super.onError(message);
         videoAdapter.reset();
-        mRefreshLayout.setRefreshing(false);
+        videoAdapter.notifyDataSetChanged();
+        refreshLayout.finishRefresh();
     }
 }

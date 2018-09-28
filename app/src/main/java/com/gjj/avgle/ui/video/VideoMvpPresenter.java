@@ -7,10 +7,10 @@ import com.gjj.avgle.ui.base.MvpView;
 @PerActivity
 public interface VideoMvpPresenter<V extends MvpView> extends MvpPresenter<V> {
 
-    void onViewPrepared();
+    void showVideo();
 
-    void sendMoreRequest(int pageNo);
+    void loadMoreVideo(int pageNo);
 
-    void refresh();
+    void refreshVideo();
 
 }

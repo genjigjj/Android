@@ -2,7 +2,6 @@ package com.gjj.avgle.ui.video;
 
 import android.util.Log;
 
-import com.androidnetworking.error.ANError;
 import com.gjj.avgle.net.ApiHelper;
 import com.gjj.avgle.ui.base.BasePresenter;
 import com.gjj.avgle.utils.rx.SchedulerProvider;
@@ -19,24 +18,23 @@ public class VideoPresenter<V extends VideoMvpView> extends BasePresenter<V> imp
     }
 
     @Override
-    public void onViewPrepared() {
+    public void showVideo() {
         getMvpView().showLoading();
-        getData(0);
+        getData(0, false);
     }
 
     @Override
-    public void sendMoreRequest(int pageNo) {
-        getMvpView().showLoading();
-        getData(pageNo);
+    public void loadMoreVideo(int pageNo) {
+        getData(pageNo, false);
+        getMvpView().finishLoadMore();
     }
 
     @Override
-    public void refresh() {
-        getMvpView().refreshVideo();
-        getData(0);
+    public void refreshVideo() {
+        getData(0, true);
     }
 
-    private void getData(int pageNo) {
+    private void getData(int pageNo, boolean isRefresh) {
         getCompositeDisposable().add(getAppApiHelper()
                 .getVideos(pageNo)
                 .subscribeOn(getSchedulerProvider().io())
@@ -48,7 +46,13 @@ public class VideoPresenter<V extends VideoMvpView> extends BasePresenter<V> imp
                     }
                     if (response != null && response.isSuccess()) {
                         Log.d("response", response.toString());
-                        getMvpView().updateVideo(response.getResponse().getVideos());
+                        if (isRefresh) {
+                            getMvpView().resetAdapter();
+                            getMvpView().addItem(response.getResponse().getVideos());
+                            getMvpView().finishRefresh();
+                        } else {
+                            getMvpView().addItem(response.getResponse().getVideos());
+                        }
                     }
                     getMvpView().hideLoading();
                 }, throwable -> {
@@ -57,11 +61,7 @@ public class VideoPresenter<V extends VideoMvpView> extends BasePresenter<V> imp
                         return;
                     }
                     getMvpView().hideLoading();
-                    // handle the login error here
-                    if (throwable instanceof ANError) {
-                        ANError anError = (ANError) throwable;
-                        handleApiError(anError);
-                    }
+                    getMvpView().onError("网络错误");
                 }));
     }
 }

@@ -7,8 +7,12 @@ import java.util.List;
 
 public interface VideoMvpView extends MvpView {
 
-    void updateVideo(List<Video> videoList);
+    void resetAdapter();
 
-    void refreshVideo();
+    void addItem(List<Video> videoList);
+
+    void finishLoadMore();
+
+    void finishRefresh();
 
 }

@@ -20,6 +20,7 @@ import android.content.Context;
 
 import com.gjj.avgle.R;
 import com.gjj.avgle.di.ApplicationContext;
+import com.gjj.avgle.net.ApiConstant;
 import com.gjj.avgle.net.ApiHelper;
 import com.gjj.avgle.net.AppApiHelper;
 import com.gjj.avgle.net.api.AvgleServiceApi;
@@ -80,7 +81,7 @@ public class ApplicationModule {
     Retrofit providesRetrofit() {
         return new Retrofit.Builder()
                 .client(new OkHttpClient())
-                .baseUrl("https://api.avgle.com/")
+                .baseUrl(ApiConstant.BASE_URL)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();

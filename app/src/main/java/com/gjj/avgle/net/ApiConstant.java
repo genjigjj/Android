@@ -22,9 +22,7 @@ package com.gjj.avgle.net;
 
 public final class ApiConstant {
 
-    public static final String BASE_URL = "https://api.avgle.com";
-
-    public static final String VIDEOS = BASE_URL + "/v1/videos/{pageNo}";
+    public static final String BASE_URL = "https://api.avgle.com/";
 
     private ApiConstant() {
         // This class is not publicly instantiable
