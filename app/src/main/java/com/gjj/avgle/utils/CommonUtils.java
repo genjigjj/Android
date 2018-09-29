@@ -23,7 +23,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.provider.Settings;
 
-
 import com.gjj.avgle.R;
 
 import java.io.IOException;

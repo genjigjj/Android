@@ -104,7 +104,7 @@ public class VideoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         if (videoList != null && videoList.size() > 0) {
             int position = getItemCount();
             this.videoList.addAll(videoList);
-            notifyItemRangeChanged(position, videoList.size());
+            notifyItemInserted(position);
         }
     }
 

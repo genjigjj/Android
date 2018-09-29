@@ -3,7 +3,6 @@ package com.gjj.avgle.ui.video;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,6 +14,7 @@ import com.gjj.avgle.di.component.ActivityComponent;
 import com.gjj.avgle.net.model.Video;
 import com.gjj.avgle.ui.base.BaseFragment;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
 import com.scwang.smartrefresh.layout.footer.BallPulseFooter;
 import com.scwang.smartrefresh.layout.header.BezierRadarHeader;
@@ -25,8 +25,9 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
-public class VideoFragment extends BaseFragment implements VideoMvpView,VideoAdapter.Callback {
+public class VideoFragment extends BaseFragment implements VideoMvpView, VideoAdapter.Callback {
 
     public static final String TAG = "VideoFragment";
 
@@ -44,8 +45,6 @@ public class VideoFragment extends BaseFragment implements VideoMvpView,VideoAda
 
     @Inject
     VideoMvpPresenter<VideoMvpView> videoMvpPresenter;
-
-    private int mLastVisibleItemPosition;
 
     public static VideoFragment newInstance() {
         Bundle args = new Bundle();
@@ -81,12 +80,11 @@ public class VideoFragment extends BaseFragment implements VideoMvpView,VideoAda
     @Override
     protected void setUp(View view) {
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        RecyclerView.ItemAnimator animator = new SlideInUpAnimator();
+        animator.setAddDuration(300);
+        mRecyclerView.setItemAnimator(animator);
         mRecyclerView.setAdapter(videoAdapter);
-        refreshLayout.setOnRefreshListener(refreshLayout -> {
-            videoAdapter.reset();
-            videoMvpPresenter.refreshVideo();
-        });
+        refreshLayout.setOnRefreshListener(refreshLayout -> videoMvpPresenter.refreshVideo());
         refreshLayout.setOnLoadMoreListener(refreshLayout -> videoMvpPresenter.loadMoreVideo((videoAdapter.getItemCount()) / 10));
         videoMvpPresenter.showVideo();
     }
@@ -115,11 +113,14 @@ public class VideoFragment extends BaseFragment implements VideoMvpView,VideoAda
 
     @Override
     public void finishRefresh() {
-        refreshLayout.finishRefresh();
+        if (refreshLayout.getState() == RefreshState.Refreshing) {
+            refreshLayout.finishRefresh();
+        }
     }
 
     @Override
     public void onBlogEmptyViewRetryClick() {
+        showLoading();
         videoMvpPresenter.refreshVideo();
     }
 

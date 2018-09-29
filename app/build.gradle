@@ -79,4 +79,7 @@ dependencies {
     //smartrefresh
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-14'
 
+    //animators
+    implementation 'jp.wasabeef:recyclerview-animators:2.2.6'
+
 }

@@ -20,21 +20,22 @@ public class VideoPresenter<V extends VideoMvpView> extends BasePresenter<V> imp
     @Override
     public void showVideo() {
         getMvpView().showLoading();
-        getData(0, false);
+        getData(0);
     }
 
     @Override
     public void loadMoreVideo(int pageNo) {
-        getData(pageNo, false);
+        getData(pageNo);
         getMvpView().finishLoadMore();
     }
 
     @Override
     public void refreshVideo() {
-        getData(0, true);
+        getMvpView().resetAdapter();
+        getData(0);
     }
 
-    private void getData(int pageNo, boolean isRefresh) {
+    private void getData(int pageNo) {
         getCompositeDisposable().add(getAppApiHelper()
                 .getVideos(pageNo)
                 .subscribeOn(getSchedulerProvider().io())
@@ -46,13 +47,8 @@ public class VideoPresenter<V extends VideoMvpView> extends BasePresenter<V> imp
                     }
                     if (response != null && response.isSuccess()) {
                         Log.d("response", response.toString());
-                        if (isRefresh) {
-                            getMvpView().resetAdapter();
-                            getMvpView().addItem(response.getResponse().getVideos());
-                            getMvpView().finishRefresh();
-                        } else {
-                            getMvpView().addItem(response.getResponse().getVideos());
-                        }
+                        getMvpView().addItem(response.getResponse().getVideos());
+                        getMvpView().finishRefresh();
                     }
                     getMvpView().hideLoading();
                 }, throwable -> {

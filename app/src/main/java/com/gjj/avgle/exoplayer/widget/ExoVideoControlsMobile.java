@@ -40,9 +40,6 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.devbrackets.android.exomedia.listener.OnBufferUpdateListener;
-import com.devbrackets.android.exomedia.listener.OnCompletionListener;
-import com.devbrackets.android.exomedia.listener.OnErrorListener;
 import com.devbrackets.android.exomedia.listener.VideoControlsVisibilityListener;
 import com.devbrackets.android.exomedia.ui.animation.BottomViewHideShowAnimation;
 import com.devbrackets.android.exomedia.ui.animation.TopViewHideShowAnimation;
@@ -118,36 +115,27 @@ public class ExoVideoControlsMobile extends ExoVideoControls {
         if (videoView != null && videoView.getVideoControls() != null) {
             videoView.getVideoControls().setVisibilityListener(new ControlsVisibilityListener());
             videoView.setReleaseOnDetachFromWindow(false);
-            videoView.setOnCompletionListener(new OnCompletionListener() {
-                @Override
-                public void onCompletion() {
-                    isPlayComplete = true;
-                    playPauseButton.setImageDrawable(replayDrawable);
-                    hideBuffering();
-                }
+            videoView.setOnCompletionListener(() -> {
+                isPlayComplete = true;
+                playPauseButton.setImageDrawable(replayDrawable);
+                hideBuffering();
             });
-            videoView.setOnErrorListener(new OnErrorListener() {
-                @Override
-                public boolean onError(Exception e) {
-                    isPlayError = true;
-                    playPauseButton.setImageDrawable(errorDrawable);
-                    hideBuffering();
-                    return false;
-                }
+            videoView.setOnErrorListener(e -> {
+                isPlayError = true;
+                playPauseButton.setImageDrawable(errorDrawable);
+                hideBuffering();
+                return false;
             });
-            videoView.setOnBufferUpdateListener(new OnBufferUpdateListener() {
-                @Override
-                public void onBufferingUpdate(int bufferPercent) {
-                    Log.d(TAG, "------------------------onBufferingUpdate: " + bufferPercent);
-                    if (seekBar == null) {
-                        return;
-                    }
-                    //当前缓冲和播放进度相等，且没有出错，暂认定为缓冲中...
-                    if (seekBar.getProgress() >= seekBar.getSecondaryProgress() && videoView.isPlaying() && !isPlayError && !isPlayComplete) {
-                        showBuffering();
-                    } else if (!isPlayError && !isPlayComplete) {
-                        hideBuffering();
-                    }
+            videoView.setOnBufferUpdateListener(bufferPercent -> {
+                Log.d(TAG, "------------------------onBufferingUpdate: " + bufferPercent);
+                if (seekBar == null) {
+                    return;
+                }
+                if (isPlayError || seekBar.getProgress() >= seekBar.getSecondaryProgress()) {
+                    showBuffering();
+                }
+                if (videoView.isPlaying()) {
+                    hideBuffering();
                 }
             });
         }
