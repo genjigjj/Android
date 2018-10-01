@@ -15,13 +15,13 @@
 
 package com.gjj.avgle.ui.main;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -36,6 +36,7 @@ import com.gjj.avgle.R;
 import com.gjj.avgle.ui.base.BaseActivity;
 import com.gjj.avgle.ui.custom.RoundedImageView;
 import com.gjj.avgle.ui.custom.SimpleSearchView;
+import com.gjj.avgle.ui.search.SearchActivity;
 import com.gjj.avgle.ui.video.VideoFragment;
 
 import java.util.Objects;
@@ -50,6 +51,10 @@ import butterknife.ButterKnife;
  */
 
 public class MainActivity extends BaseActivity implements MainMvpView {
+
+    private android.app.Fragment currentFragment;
+
+    private android.app.FragmentManager fragmentManager;
 
     @Inject
     MainMvpPresenter<MainMvpView> mPresenter;
@@ -88,23 +93,21 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         getActivityComponent().inject(this);
         setUnBinder(ButterKnife.bind(this));
         mPresenter.onAttach(this);
+        this.fragmentManager = getFragmentManager();
         setUp();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-
         MenuItem item = menu.findItem(R.id.action_search);
         mSearchView.setMenuItem(item);
         mSearchView.setOnQueryTextListener(new SimpleSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-               /* try {
-                    startActivity(MovieListActivity.newIntent(MainActivity.this, query + " 的搜索结果", JAViewer.getDataSource().getLink() + BasicService.LANGUAGE_NODE + "/search/" + URLEncoder.encode(query, "UTF-8")));
-                } catch (UnsupportedEncodingException e) {
-                    return false;
-                }*/
+                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                intent.putExtra("query", query);
+                startActivity(intent);
                 return true;
             }
 
@@ -136,6 +139,7 @@ public class MainActivity extends BaseActivity implements MainMvpView {
     @Override
     protected void onResume() {
         super.onResume();
+        mSearchView.closeSearch();
         if (mDrawer != null)
             mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
     }
@@ -152,13 +156,13 @@ public class MainActivity extends BaseActivity implements MainMvpView {
 
     @Override
     public void onFragmentDetached(String tag) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        android.app.FragmentManager fragmentManager = getFragmentManager();
         Fragment fragment = fragmentManager.findFragmentByTag(tag);
         if (fragment != null) {
             fragmentManager
                     .beginTransaction()
                     .disallowAddToBackStack()
-                    .setCustomAnimations(R.anim.slide_left, R.anim.slide_right)
+                    //.setCustomAnimations(R.anim.slide_left, R.anim.slide_right)
                     .remove(fragment)
                     .commitNow();
             unlockDrawer();
@@ -167,12 +171,9 @@ public class MainActivity extends BaseActivity implements MainMvpView {
 
     @Override
     public void showVideoFragment() {
-        getSupportFragmentManager()
-                .beginTransaction()
-                //.disallowAddToBackStack()
-                //.setCustomAnimations(R.anim.slide_left, R.anim.slide_right)
-                .add(R.id.content, VideoFragment.newInstance(), VideoFragment.TAG)
-                .commit();
+        Fragment fragment = fragmentManager.findFragmentByTag(VideoFragment.TAG);
+        this.setFragment(fragment, R.string.home);
+        this.currentFragment = fragment;
     }
 
     @Override
@@ -188,12 +189,8 @@ public class MainActivity extends BaseActivity implements MainMvpView {
     }
 
     @Override
-    public void changeTitle(int title) {
-        Objects.requireNonNull(getSupportActionBar()).setTitle(title);
-    }
-
-    @Override
     protected void setUp() {
+        mSearchView.closeSearch();
         setSupportActionBar(mToolbar);
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,
@@ -215,8 +212,17 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         mDrawer.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
         setupNavMenu();
+        initFragments();
         //mPresenter.onNavMenuCreated();
         //mPresenter.onViewInitialized();
+    }
+
+    private void initFragments() {
+        FragmentTransaction transaction = this.fragmentManager.beginTransaction();
+        VideoFragment videoFragment = VideoFragment.newInstance();
+        transaction.add(R.id.content, videoFragment, VideoFragment.TAG);
+        transaction.commit();
+        this.currentFragment = videoFragment;
     }
 
 
@@ -228,13 +234,13 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         //默认选择第一项
         MenuItem selectedItem = mNavigationView.getMenu().findItem(R.id.nav_home);
         mNavigationView.setCheckedItem(selectedItem.getItemId());
-        mPresenter.onDrawerHomeClick(R.string.home);
+        mPresenter.onDrawerHomeClick();
         mNavigationView.setNavigationItemSelectedListener(
                 item -> {
                     mDrawer.closeDrawer(GravityCompat.START);
                     switch (item.getItemId()) {
                         case R.id.nav_home:
-                            mPresenter.onDrawerHomeClick(R.string.home);
+                            mPresenter.onDrawerHomeClick();
                         case R.id.nav_released:
                             mPresenter.onDrawerOptionAboutClick();
                             return true;
@@ -266,5 +272,20 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         if (mDrawer != null) {
             mDrawer.closeDrawer(Gravity.START);
         }
+    }
+
+    private void setFragment(Fragment fragment, int title) {
+        Objects.requireNonNull(getSupportActionBar()).setTitle(title);
+        Fragment old = this.currentFragment;
+        if (old == fragment) {
+            return;
+        }
+        FragmentTransaction transaction = this.fragmentManager.beginTransaction();
+        if (old != null) {
+            transaction.hide(old);
+        }
+        transaction.show(fragment);
+        transaction.commit();
+        this.currentFragment = fragment;
     }
 }

@@ -29,6 +29,9 @@ import com.gjj.avgle.ui.main.MainPresenter;
 import com.gjj.avgle.ui.play.PlayMvpPresenter;
 import com.gjj.avgle.ui.play.PlayMvpView;
 import com.gjj.avgle.ui.play.PlayPresenter;
+import com.gjj.avgle.ui.search.SearchMvpPresenter;
+import com.gjj.avgle.ui.search.SearchMvpView;
+import com.gjj.avgle.ui.search.SearchPresenter;
 import com.gjj.avgle.ui.video.VideoAdapter;
 import com.gjj.avgle.ui.video.VideoMvpPresenter;
 import com.gjj.avgle.ui.video.VideoMvpView;
@@ -106,6 +109,12 @@ public class ActivityModule {
     @Provides
     LinearLayoutManager provideLinearLayoutManager() {
         return new LinearLayoutManager(mActivity);
+    }
+
+    @Provides
+    SearchMvpPresenter<SearchMvpView> provideSearchMvpPresenter(
+            SearchPresenter<SearchMvpView> presenter) {
+        return presenter;
     }
 
 }

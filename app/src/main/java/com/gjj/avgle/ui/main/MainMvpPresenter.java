@@ -30,6 +30,6 @@ public interface MainMvpPresenter<V extends MainMvpView> extends MvpPresenter<V>
 
     void onDrawerMyFeedClick();
 
-    void onDrawerHomeClick(int title);
+    void onDrawerHomeClick();
 
 }

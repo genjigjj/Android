@@ -29,6 +29,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.gjj.avgle.R;
+import com.gjj.avgle.net.model.AvgleResponse;
 import com.gjj.avgle.net.model.Video;
 import com.gjj.avgle.ui.base.BaseViewHolder;
 import com.gjj.avgle.ui.play.PlayActivity;
@@ -52,6 +53,8 @@ public class VideoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     private Callback mCallback;
 
     private List<Video> videoList;
+
+    private AvgleResponse response;
 
     private Context context;
 
@@ -198,5 +201,13 @@ public class VideoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             if (mCallback != null)
                 mCallback.onBlogEmptyViewRetryClick();
         }
+    }
+
+    public AvgleResponse getResponse() {
+        return response;
+    }
+
+    public void setResponse(AvgleResponse response) {
+        this.response = response;
     }
 }

@@ -1,4 +1,4 @@
-package com.gjj.avgle.ui.video;
+package com.gjj.avgle.ui.search;
 
 import android.util.Log;
 
@@ -10,34 +10,35 @@ import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
 
-public class VideoPresenter<V extends VideoMvpView> extends BasePresenter<V> implements VideoMvpPresenter<V> {
+public class SearchPresenter<V extends SearchMvpView> extends BasePresenter<V> implements SearchMvpPresenter<V> {
 
     @Inject
-    public VideoPresenter(CompositeDisposable compositeDisposable, ApiHelper apiHelper, SchedulerProvider schedulerProvider) {
+    public SearchPresenter(CompositeDisposable compositeDisposable, ApiHelper apiHelper, SchedulerProvider schedulerProvider) {
         super(compositeDisposable, apiHelper, schedulerProvider);
     }
 
+
     @Override
-    public void showVideo() {
+    public void showVideo(String query) {
         getMvpView().showLoading();
-        getData(0);
+        getData(query, 0);
     }
 
     @Override
-    public void loadMoreVideo(int pageNo) {
-        getData(pageNo);
+    public void loadMoreVideo(String query, int pageNo) {
+        getData(query, pageNo);
         getMvpView().finishLoadMore();
     }
 
     @Override
-    public void refreshVideo() {
+    public void refreshVideo(String query) {
         getMvpView().resetAdapter();
-        getData(0);
+        getData(query, 0);
     }
 
-    private void getData(int pageNo) {
+    private void getData(String query, int page) {
         getCompositeDisposable().add(getAppApiHelper()
-                .getVideos(pageNo)
+                .searchVideo(query, page)
                 .subscribeOn(getSchedulerProvider().io())
                 .observeOn(getSchedulerProvider().ui())
                 .subscribe(response -> {

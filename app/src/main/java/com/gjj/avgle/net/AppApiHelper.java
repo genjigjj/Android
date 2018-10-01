@@ -17,7 +17,6 @@ package com.gjj.avgle.net;
 
 import com.gjj.avgle.net.api.AvgleServiceApi;
 import com.gjj.avgle.net.model.VideoResponse;
-import com.google.gson.Gson;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -35,12 +34,9 @@ public class AppApiHelper implements ApiHelper {
 
     private AvgleServiceApi avgleServiceApi;
 
-    private Gson gson;
-
     @Inject
-    public AppApiHelper(AvgleServiceApi avgleServiceApi, Gson gson) {
+    public AppApiHelper(AvgleServiceApi avgleServiceApi) {
         this.avgleServiceApi = avgleServiceApi;
-        this.gson = gson;
     }
 
 
@@ -52,6 +48,11 @@ public class AppApiHelper implements ApiHelper {
     @Override
     public Observable<Response<ResponseBody>> getPlayVideoUrl(String url) {
         return avgleServiceApi.getPlayVideoUrl(url);
+    }
+
+    @Override
+    public Observable<VideoResponse> searchVideo(String query, int page) {
+        return avgleServiceApi.searchVideo(query, page);
     }
 }
 

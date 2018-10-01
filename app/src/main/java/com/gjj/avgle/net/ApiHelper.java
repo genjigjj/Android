@@ -32,4 +32,6 @@ public interface ApiHelper {
 
     Observable<Response<ResponseBody>> getPlayVideoUrl(String url);
 
+    Observable<VideoResponse> searchVideo(String query, int page);
+
 }

@@ -22,4 +22,15 @@ public interface AvgleServiceApi {
      */
     @GET
     Observable<Response<ResponseBody>> getPlayVideoUrl(@Url String url);
+
+    /**
+     * 搜索视频
+     *
+     * @param query 查询条件
+     * @param page  页数
+     * @return 搜索结果
+     */
+    @GET("v1/search/{query}/{page}?limit=10")
+    Observable<VideoResponse> searchVideo(@Path("query") String query, @Path("page") int page);
+
 }

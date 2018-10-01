@@ -1,4 +1,4 @@
-package com.gjj.avgle.ui.video;
+package com.gjj.avgle.ui.search;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,6 +13,7 @@ import com.gjj.avgle.R;
 import com.gjj.avgle.di.component.ActivityComponent;
 import com.gjj.avgle.net.model.VideoResponse;
 import com.gjj.avgle.ui.base.BaseFragment;
+import com.gjj.avgle.ui.video.VideoAdapter;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
@@ -25,9 +26,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
-public class VideoFragment extends BaseFragment implements VideoMvpView, VideoAdapter.Callback {
+public class SearchFragment extends BaseFragment implements SearchMvpView, VideoAdapter.Callback {
 
-    public static final String TAG = "VideoFragment";
+    public static final String TAG = "SearchFragment";
+
+    private String query;
 
     @Inject
     VideoAdapter videoAdapter;
@@ -42,12 +45,11 @@ public class VideoFragment extends BaseFragment implements VideoMvpView, VideoAd
     protected RefreshLayout refreshLayout;
 
     @Inject
-    VideoMvpPresenter<VideoMvpView> videoMvpPresenter;
+    SearchMvpPresenter<SearchMvpView> searchMvpPresenter;
 
-    public static VideoFragment newInstance() {
-        Bundle args = new Bundle();
-        VideoFragment fragment = new VideoFragment();
-        fragment.setArguments(args);
+    public static SearchFragment newInstance(Bundle bundle) {
+        SearchFragment fragment = new SearchFragment();
+        fragment.setArguments(bundle);
         return fragment;
     }
 
@@ -56,11 +58,14 @@ public class VideoFragment extends BaseFragment implements VideoMvpView, VideoAd
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_video, container, false);
+        if (getArguments() != null) {
+            query = getArguments().getString("query");
+        }
         ActivityComponent component = getActivityComponent();
         if (component != null) {
             component.inject(this);
             setUnBinder(ButterKnife.bind(this, view));
-            videoMvpPresenter.onAttach(this);
+            searchMvpPresenter.onAttach(this);
             videoAdapter.setCallback(this);
         }
         return view;
@@ -82,31 +87,28 @@ public class VideoFragment extends BaseFragment implements VideoMvpView, VideoAd
         animator.setAddDuration(300);
         mRecyclerView.setItemAnimator(animator);
         mRecyclerView.setAdapter(videoAdapter);
-        refreshLayout.setOnRefreshListener(refreshLayout -> videoMvpPresenter.refreshVideo());
+        refreshLayout.setOnRefreshListener(refreshLayout -> searchMvpPresenter.refreshVideo(query));
         refreshLayout.setOnLoadMoreListener(refreshLayout -> {
             if (videoAdapter.getResponse().isHas_more()) {
-                videoMvpPresenter.loadMoreVideo(videoAdapter.getResponse().getCurrent_offset() / 10 + 1);
-            }else {
+                searchMvpPresenter.loadMoreVideo(query, videoAdapter.getResponse().getCurrent_offset() / 10 + 1);
+            } else {
                 finishLoadMore();
                 showMessage("暂无更多视频");
             }
         });
-        videoMvpPresenter.showVideo();
+        searchMvpPresenter.showVideo(query);
     }
-
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        if (videoMvpPresenter != null) {
-            videoMvpPresenter.refreshVideo();
-        }
-    }
-
 
     @Override
     public void onDestroyView() {
-        videoMvpPresenter.onDetach();
+        searchMvpPresenter.onDetach();
         super.onDestroyView();
+    }
+
+    @Override
+    public void onBlogEmptyViewRetryClick() {
+        showLoading();
+        searchMvpPresenter.refreshVideo(query);
     }
 
     @Override
@@ -133,16 +135,11 @@ public class VideoFragment extends BaseFragment implements VideoMvpView, VideoAd
     }
 
     @Override
-    public void onBlogEmptyViewRetryClick() {
-        showLoading();
-        videoMvpPresenter.refreshVideo();
-    }
-
-    @Override
     public void onError(String message) {
         super.onError(message);
         videoAdapter.reset();
         videoAdapter.notifyDataSetChanged();
         refreshLayout.finishRefresh();
     }
+
 }

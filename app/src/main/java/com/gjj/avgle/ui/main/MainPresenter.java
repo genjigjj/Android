@@ -57,8 +57,7 @@ public class MainPresenter<V extends MainMvpView> extends BasePresenter<V>
     }
 
     @Override
-    public void onDrawerHomeClick(int title) {
-        getMvpView().changeTitle(title);
+    public void onDrawerHomeClick() {
         getMvpView().closeNavigationDrawer();
         getMvpView().showVideoFragment();
     }

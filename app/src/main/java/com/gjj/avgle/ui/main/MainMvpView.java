@@ -35,6 +35,4 @@ public interface MainMvpView extends MvpView {
 
     void unlockDrawer();
 
-    void changeTitle(int title);
-
 }
