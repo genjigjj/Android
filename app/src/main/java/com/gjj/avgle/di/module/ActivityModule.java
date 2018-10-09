@@ -32,7 +32,7 @@ import com.gjj.avgle.ui.play.PlayPresenter;
 import com.gjj.avgle.ui.search.SearchMvpPresenter;
 import com.gjj.avgle.ui.search.SearchMvpView;
 import com.gjj.avgle.ui.search.SearchPresenter;
-import com.gjj.avgle.ui.video.VideoAdapter;
+import com.gjj.avgle.adapter.VideoAdapter;
 import com.gjj.avgle.ui.video.VideoMvpPresenter;
 import com.gjj.avgle.ui.video.VideoMvpView;
 import com.gjj.avgle.ui.video.VideoPresenter;

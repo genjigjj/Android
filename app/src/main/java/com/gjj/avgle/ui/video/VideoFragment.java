@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.gjj.avgle.R;
+import com.gjj.avgle.adapter.VideoAdapter;
 import com.gjj.avgle.di.component.ActivityComponent;
 import com.gjj.avgle.net.model.VideoResponse;
 import com.gjj.avgle.ui.base.BaseFragment;

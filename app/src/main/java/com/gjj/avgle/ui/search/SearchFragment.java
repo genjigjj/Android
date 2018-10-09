@@ -13,7 +13,7 @@ import com.gjj.avgle.R;
 import com.gjj.avgle.di.component.ActivityComponent;
 import com.gjj.avgle.net.model.VideoResponse;
 import com.gjj.avgle.ui.base.BaseFragment;
-import com.gjj.avgle.ui.video.VideoAdapter;
+import com.gjj.avgle.adapter.VideoAdapter;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle;

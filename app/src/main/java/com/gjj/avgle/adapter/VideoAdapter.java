@@ -13,7 +13,7 @@
  * limitations under the License
  */
 
-package com.gjj.avgle.ui.video;
+package com.gjj.avgle.adapter;
 
 import android.content.Context;
 import android.content.Intent;
