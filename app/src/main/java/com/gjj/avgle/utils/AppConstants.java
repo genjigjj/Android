@@ -36,6 +36,17 @@ public final class AppConstants {
 
     public static final String TIMESTAMP_FORMAT = "yyyyMMdd_HHmmss";
 
+    public static final String[] CATEGORY_DEFAULT_AVGLE_VALUE =
+            {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+                    "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
+                    "21", "22", "23", "24"};
+
+    public static final String[] CATEGORY_DEFAULT_AVGLE_NAME =
+            {"AV女優", "日本AV", "無修正", "少女", "素人", "肛交",
+                    "巨乳", "Cosplay", "女子校生", "人妻", "熟女", "SM",
+                    "中國", "香港", "日本", "韓国", "台湾", "亞洲", "金髪洋物",
+                    "3D", "VR", "偶像", "映画・電影", "Anime"};
+
     private AppConstants() {
         // This utility class is not publicly instantiable
     }

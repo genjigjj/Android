@@ -28,7 +28,7 @@ import retrofit2.Response;
 public interface ApiHelper {
 
 
-    Observable<VideoResponse> getVideos(int pageNo);
+    Observable<VideoResponse> getVideos(int pageNo, String c);
 
     Observable<Response<ResponseBody>> getPlayVideoUrl(String url);
 

@@ -41,8 +41,8 @@ public class AppApiHelper implements ApiHelper {
 
 
     @Override
-    public Observable<VideoResponse> getVideos(int page) {
-        return avgleServiceApi.getVideos(page);
+    public Observable<VideoResponse> getVideos(int page, String c) {
+        return avgleServiceApi.getVideos(page, c);
     }
 
     @Override

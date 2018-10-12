@@ -18,26 +18,26 @@ public class VideoPresenter<V extends VideoMvpView> extends BasePresenter<V> imp
     }
 
     @Override
-    public void showVideo() {
+    public void showVideo(String c) {
         getMvpView().showLoading();
-        getData(0);
+        getData(0, c);
     }
 
     @Override
-    public void loadMoreVideo(int pageNo) {
-        getData(pageNo);
+    public void loadMoreVideo(int pageNo, String c) {
+        getData(pageNo, c);
         getMvpView().finishLoadMore();
     }
 
     @Override
-    public void refreshVideo() {
+    public void refreshVideo(String c) {
         getMvpView().resetAdapter();
-        getData(0);
+        getData(0, c);
     }
 
-    private void getData(int pageNo) {
+    private void getData(int pageNo, String c) {
         getCompositeDisposable().add(getAppApiHelper()
-                .getVideos(pageNo)
+                .getVideos(pageNo, c)
                 .subscribeOn(getSchedulerProvider().io())
                 .observeOn(getSchedulerProvider().ui())
                 .subscribe(response -> {

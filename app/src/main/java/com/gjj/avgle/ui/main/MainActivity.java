@@ -16,6 +16,7 @@
 package com.gjj.avgle.ui.main;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
@@ -37,9 +38,8 @@ import com.gjj.avgle.ui.base.BaseActivity;
 import com.gjj.avgle.ui.custom.RoundedImageView;
 import com.gjj.avgle.ui.custom.SimpleSearchView;
 import com.gjj.avgle.ui.search.SearchActivity;
-import com.gjj.avgle.ui.video.VideoFragment;
-
-import java.util.Objects;
+import com.gjj.avgle.ui.video.ContentFragment;
+import com.gjj.avgle.utils.FragmentUtils;
 
 import javax.inject.Inject;
 
@@ -52,9 +52,9 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends BaseActivity implements MainMvpView {
 
-    private android.app.Fragment currentFragment;
+    private Fragment currentFragment;
 
-    private android.app.FragmentManager fragmentManager;
+    private FragmentManager fragmentManager;
 
     @Inject
     MainMvpPresenter<MainMvpView> mPresenter;
@@ -171,9 +171,8 @@ public class MainActivity extends BaseActivity implements MainMvpView {
 
     @Override
     public void showVideoFragment() {
-        Fragment fragment = fragmentManager.findFragmentByTag(VideoFragment.TAG);
-        this.setFragment(fragment, R.string.home);
-        this.currentFragment = fragment;
+        Fragment fragment = fragmentManager.findFragmentByTag(ContentFragment.TAG);
+        this.currentFragment = FragmentUtils.switchContent(fragmentManager, currentFragment, fragment, R.id.content, ContentFragment.TAG, false);
     }
 
     @Override
@@ -219,10 +218,10 @@ public class MainActivity extends BaseActivity implements MainMvpView {
 
     private void initFragments() {
         FragmentTransaction transaction = this.fragmentManager.beginTransaction();
-        VideoFragment videoFragment = VideoFragment.newInstance();
-        transaction.add(R.id.content, videoFragment, VideoFragment.TAG);
+        ContentFragment contentFragment = ContentFragment.newInstance();
+        transaction.add(R.id.content, contentFragment, ContentFragment.TAG);
         transaction.commit();
-        this.currentFragment = videoFragment;
+        this.currentFragment = contentFragment;
     }
 
 
@@ -234,7 +233,6 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         //默认选择第一项
         MenuItem selectedItem = mNavigationView.getMenu().findItem(R.id.nav_home);
         mNavigationView.setCheckedItem(selectedItem.getItemId());
-        mPresenter.onDrawerHomeClick();
         mNavigationView.setNavigationItemSelectedListener(
                 item -> {
                     mDrawer.closeDrawer(GravityCompat.START);
@@ -274,18 +272,4 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         }
     }
 
-    private void setFragment(Fragment fragment, int title) {
-        Objects.requireNonNull(getSupportActionBar()).setTitle(title);
-        Fragment old = this.currentFragment;
-        if (old == fragment) {
-            return;
-        }
-        FragmentTransaction transaction = this.fragmentManager.beginTransaction();
-        if (old != null) {
-            transaction.hide(old);
-        }
-        transaction.show(fragment);
-        transaction.commit();
-        this.currentFragment = fragment;
-    }
 }

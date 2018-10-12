@@ -45,6 +45,11 @@ public class VideoFragment extends BaseFragment implements VideoMvpView, VideoAd
     @Inject
     VideoMvpPresenter<VideoMvpView> videoMvpPresenter;
 
+    /**
+     * 类别
+     */
+    private String c;
+
     public static VideoFragment newInstance() {
         Bundle args = new Bundle();
         VideoFragment fragment = new VideoFragment();
@@ -83,23 +88,23 @@ public class VideoFragment extends BaseFragment implements VideoMvpView, VideoAd
         animator.setAddDuration(300);
         mRecyclerView.setItemAnimator(animator);
         mRecyclerView.setAdapter(videoAdapter);
-        refreshLayout.setOnRefreshListener(refreshLayout -> videoMvpPresenter.refreshVideo());
+        refreshLayout.setOnRefreshListener(refreshLayout -> videoMvpPresenter.refreshVideo(c));
         refreshLayout.setOnLoadMoreListener(refreshLayout -> {
             if (videoAdapter.getResponse().isHas_more()) {
-                videoMvpPresenter.loadMoreVideo(videoAdapter.getResponse().getCurrent_offset() / 10 + 1);
-            }else {
+                videoMvpPresenter.loadMoreVideo(videoAdapter.getResponse().getCurrent_offset() / 10 + 1,c);
+            } else {
                 finishLoadMore();
                 showMessage("暂无更多视频");
             }
         });
-        videoMvpPresenter.showVideo();
+        videoMvpPresenter.showVideo(c);
     }
 
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (videoMvpPresenter != null) {
-            videoMvpPresenter.refreshVideo();
+            videoMvpPresenter.refreshVideo(c);
         }
     }
 
@@ -136,7 +141,7 @@ public class VideoFragment extends BaseFragment implements VideoMvpView, VideoAd
     @Override
     public void onBlogEmptyViewRetryClick() {
         showLoading();
-        videoMvpPresenter.refreshVideo();
+        videoMvpPresenter.refreshVideo(c);
     }
 
     @Override
@@ -145,5 +150,9 @@ public class VideoFragment extends BaseFragment implements VideoMvpView, VideoAd
         videoAdapter.reset();
         videoAdapter.notifyDataSetChanged();
         refreshLayout.finishRefresh();
+    }
+
+    public void setC(String c) {
+        this.c = c;
     }
 }
