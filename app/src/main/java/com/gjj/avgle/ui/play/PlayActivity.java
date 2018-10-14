@@ -41,6 +41,8 @@ public class PlayActivity extends BaseActivity implements PlayMvpView, OnPrepare
         videoControlsMobile = (ExoVideoControlsMobile) videoView.getVideoControls();
         videoControlsMobile.setOnBackButtonClickListener(view -> onBackPressed());
         String vid = getIntent().getStringExtra("vid");
+        String title = getIntent().getStringExtra("title");
+        videoControlsMobile.setTitle(title);
         mvpPresenter.getPlayVideoUrl(vid);
     }
 

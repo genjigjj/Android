@@ -1,11 +1,9 @@
 package com.gjj.avgle.adapter;
 
-import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.support.annotation.Nullable;
 import android.app.FragmentTransaction;
-import android.view.ViewGroup;
+import android.support.annotation.Nullable;
 
 import com.gjj.avgle.ui.video.VideoFragment;
 import com.gjj.avgle.utils.AppConstants;
@@ -39,20 +37,6 @@ public class VideoFragmentPagerAdapter extends AppFragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         return AppConstants.CATEGORY_DEFAULT_AVGLE_NAME[position];
-    }
-
-    @SuppressLint("CommitTransaction")
-    @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
-        if (isDestroy) {
-            if (mCurTransaction == null) {
-                mCurTransaction = mFragmentManager.beginTransaction();
-            }
-            mCurTransaction.remove((Fragment) object);
-        } else {
-            super.destroyItem(container, position, object);
-        }
-
     }
 
 }

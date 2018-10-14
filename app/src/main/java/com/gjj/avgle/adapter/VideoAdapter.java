@@ -33,6 +33,7 @@ import com.gjj.avgle.net.model.AvgleResponse;
 import com.gjj.avgle.net.model.Video;
 import com.gjj.avgle.ui.base.BaseViewHolder;
 import com.gjj.avgle.ui.play.PlayActivity;
+import com.gjj.avgle.utils.DateUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -127,8 +128,8 @@ public class VideoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         @BindView(R.id.title_text_view)
         TextView titleTextView;
 
-        @BindView(R.id.duration_text_view)
-        TextView durationTextView;
+        @BindView(R.id.viewnumber_text_view)
+        TextView viewnumberTextView;
 
         @BindView(R.id.date_text_view)
         TextView dateTextView;
@@ -156,11 +157,8 @@ public class VideoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                     if (video.getTitle() != null) {
                         titleTextView.setText(video.getTitle());
                     }
-
-                    durationTextView.setText(String.valueOf(video.getDuration()));
-
-                    dateTextView.setText(String.valueOf(video.getAddtime()));
-
+                    viewnumberTextView.setText(String.valueOf(video.getViewnumber()));
+                    dateTextView.setText(DateUtils.convertTimeToFormat(video.getAddtime()));
                 }
 
                 itemView.setOnClickListener((View v) -> {
@@ -168,6 +166,7 @@ public class VideoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                         try {
                             Intent intent = new Intent(itemView.getContext(), PlayActivity.class);
                             intent.putExtra("vid", video.getVid());
+                            intent.putExtra("title", video.getTitle());
                             context.startActivity(intent);
                         } catch (Exception e) {
                             Log.d("url error", e.getMessage());

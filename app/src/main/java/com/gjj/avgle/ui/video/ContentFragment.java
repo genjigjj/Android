@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.gjj.avgle.R;
 import com.gjj.avgle.adapter.VideoFragmentPagerAdapter;
 import com.gjj.avgle.ui.base.BaseFragment;
+import com.gjj.avgle.utils.AppConstants;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,6 +47,7 @@ public class ContentFragment extends BaseFragment {
         VideoFragmentPagerAdapter adapter = new VideoFragmentPagerAdapter(getChildFragmentManager());
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
+        viewPager.setOffscreenPageLimit(AppConstants.CATEGORY_DEFAULT_AVGLE_VALUE.length);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
