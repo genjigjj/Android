@@ -15,6 +15,8 @@
 
 package com.gjj.avgle.net;
 
+import com.gjj.avgle.net.model.CollectionResponse;
+import com.gjj.avgle.net.model.VideoDetail;
 import com.gjj.avgle.net.model.VideoResponse;
 
 import io.reactivex.Observable;
@@ -33,5 +35,9 @@ public interface ApiHelper {
     Observable<Response<ResponseBody>> getPlayVideoUrl(String url);
 
     Observable<VideoResponse> searchVideo(String query, int page);
+
+    Observable<CollectionResponse> getFavorites(int start, int end);
+
+    Observable<VideoDetail> getDetail(int vid);
 
 }

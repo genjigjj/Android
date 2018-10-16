@@ -16,6 +16,8 @@
 package com.gjj.avgle.net;
 
 import com.gjj.avgle.net.api.AvgleServiceApi;
+import com.gjj.avgle.net.model.CollectionResponse;
+import com.gjj.avgle.net.model.VideoDetail;
 import com.gjj.avgle.net.model.VideoResponse;
 
 import javax.inject.Inject;
@@ -53,6 +55,16 @@ public class AppApiHelper implements ApiHelper {
     @Override
     public Observable<VideoResponse> searchVideo(String query, int page) {
         return avgleServiceApi.searchVideo(query, page);
+    }
+
+    @Override
+    public Observable<CollectionResponse> getFavorites(int start, int end) {
+        return avgleServiceApi.getFavorites(ApiConstant.COLLECTION_URL, start, end);
+    }
+
+    @Override
+    public Observable<VideoDetail> getDetail(int vid) {
+        return avgleServiceApi.getDetail(vid);
     }
 }
 

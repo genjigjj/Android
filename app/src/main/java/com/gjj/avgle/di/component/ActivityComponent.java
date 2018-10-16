@@ -18,6 +18,7 @@ package com.gjj.avgle.di.component;
 
 import com.gjj.avgle.di.PerActivity;
 import com.gjj.avgle.di.module.ActivityModule;
+import com.gjj.avgle.ui.favorites.FavoriteFragment;
 import com.gjj.avgle.ui.main.MainActivity;
 import com.gjj.avgle.ui.play.PlayActivity;
 import com.gjj.avgle.ui.search.SearchFragment;
@@ -40,4 +41,6 @@ public interface ActivityComponent {
     void inject(PlayActivity activity);
 
     void inject(SearchFragment fragment);
+
+    void inject(FavoriteFragment fragment);
 }

@@ -24,6 +24,9 @@ public final class ApiConstant {
 
     public static final String BASE_URL = "https://api.avgle.com/";
 
+    public static final String COLLECTION_URL = "http://45.78.42.182:3000/api/get";
+
+
     private ApiConstant() {
         // This class is not publicly instantiable
     }

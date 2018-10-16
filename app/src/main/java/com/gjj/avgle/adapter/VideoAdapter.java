@@ -59,6 +59,8 @@ public class VideoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     private Context context;
 
+    private boolean hasMore = false;
+
     public VideoAdapter(List<Video> videoList) {
         this.videoList = videoList;
     }
@@ -109,6 +111,9 @@ public class VideoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             int position = getItemCount();
             this.videoList.addAll(videoList);
             notifyItemInserted(position);
+            hasMore = true;
+        } else {
+            hasMore = false;
         }
     }
 
@@ -208,5 +213,9 @@ public class VideoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     public void setResponse(AvgleResponse response) {
         this.response = response;
+    }
+
+    public boolean isHasMore() {
+        return hasMore;
     }
 }

@@ -39,27 +39,27 @@ public class MainPresenter<V extends MainMvpView> extends BasePresenter<V>
     }
 
     @Override
-    public void onDrawerOptionAboutClick() {
+    public void onDrawerHomeClick() {
         getMvpView().closeNavigationDrawer();
         getMvpView().showVideoFragment();
     }
 
     @Override
+    public void onDrawerCollectionClick() {
+        getMvpView().closeNavigationDrawer();
+        getMvpView().showFavoriteFragment();
+    }
+
+    @Override
     public void onDrawerRateUsClick() {
         getMvpView().closeNavigationDrawer();
-        getMvpView().showRateUsDialog();
+        getMvpView().showFavoriteFragment();
     }
 
     @Override
     public void onDrawerMyFeedClick() {
         getMvpView().closeNavigationDrawer();
         getMvpView().openMyFeedActivity();
-    }
-
-    @Override
-    public void onDrawerHomeClick() {
-        getMvpView().closeNavigationDrawer();
-        getMvpView().showVideoFragment();
     }
 
 }

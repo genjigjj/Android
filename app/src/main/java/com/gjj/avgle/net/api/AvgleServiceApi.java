@@ -1,5 +1,7 @@
 package com.gjj.avgle.net.api;
 
+import com.gjj.avgle.net.model.CollectionResponse;
+import com.gjj.avgle.net.model.VideoDetail;
 import com.gjj.avgle.net.model.VideoResponse;
 
 import io.reactivex.Observable;
@@ -33,5 +35,25 @@ public interface AvgleServiceApi {
      */
     @GET("v1/search/{query}/{page}?limit=10")
     Observable<VideoResponse> searchVideo(@Path("query") String query, @Path("page") int page);
+
+    /**
+     * 获取收藏列表
+     *
+     * @param url   url
+     * @param start 开始
+     * @param end   结束
+     * @return 收藏列表
+     */
+    @GET
+    Observable<CollectionResponse> getFavorites(@Url String url, @Query("start") int start, @Query("end") int end);
+
+    /**
+     * 获取视频详情
+     *
+     * @param vid 视频id
+     * @return 视频详情
+     */
+    @GET("v1/video/{vid}")
+    Observable<VideoDetail> getDetail(@Path("vid") int vid);
 
 }

@@ -49,4 +49,15 @@ public class AvgleResponse {
         this.videos = videos;
     }
 
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer("AvgleResponse{");
+        sb.append("has_more=").append(has_more);
+        sb.append(", total_videos=").append(total_videos);
+        sb.append(", current_offset=").append(current_offset);
+        sb.append(", limit=").append(limit);
+        sb.append(", videos=").append(videos);
+        sb.append('}');
+        return sb.toString();
+    }
 }

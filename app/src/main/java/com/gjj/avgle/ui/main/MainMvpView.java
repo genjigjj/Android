@@ -25,7 +25,7 @@ public interface MainMvpView extends MvpView {
 
     void showVideoFragment();
 
-    void showRateUsDialog();
+    void showFavoriteFragment();
 
     void openMyFeedActivity();
 

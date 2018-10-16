@@ -19,10 +19,13 @@ import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 
+import com.gjj.avgle.adapter.VideoAdapter;
 import com.gjj.avgle.di.ActivityContext;
 import com.gjj.avgle.di.PerActivity;
 import com.gjj.avgle.net.AppApiHelper;
-import com.gjj.avgle.net.model.Video;
+import com.gjj.avgle.ui.favorites.FavoriteMvpPresenter;
+import com.gjj.avgle.ui.favorites.FavoriteMvpView;
+import com.gjj.avgle.ui.favorites.FavoritePresenter;
 import com.gjj.avgle.ui.main.MainMvpPresenter;
 import com.gjj.avgle.ui.main.MainMvpView;
 import com.gjj.avgle.ui.main.MainPresenter;
@@ -32,7 +35,6 @@ import com.gjj.avgle.ui.play.PlayPresenter;
 import com.gjj.avgle.ui.search.SearchMvpPresenter;
 import com.gjj.avgle.ui.search.SearchMvpView;
 import com.gjj.avgle.ui.search.SearchPresenter;
-import com.gjj.avgle.adapter.VideoAdapter;
 import com.gjj.avgle.ui.video.VideoMvpPresenter;
 import com.gjj.avgle.ui.video.VideoMvpView;
 import com.gjj.avgle.ui.video.VideoPresenter;
@@ -103,7 +105,7 @@ public class ActivityModule {
 
     @Provides
     VideoAdapter provideVideoAdapter() {
-        return new VideoAdapter(new ArrayList<Video>());
+        return new VideoAdapter(new ArrayList<>());
     }
 
     @Provides
@@ -114,6 +116,12 @@ public class ActivityModule {
     @Provides
     SearchMvpPresenter<SearchMvpView> provideSearchMvpPresenter(
             SearchPresenter<SearchMvpView> presenter) {
+        return presenter;
+    }
+
+    @Provides
+    FavoriteMvpPresenter<FavoriteMvpView> provideFavoritePresenter(
+            FavoritePresenter<FavoriteMvpView> presenter) {
         return presenter;
     }
 

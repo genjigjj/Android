@@ -10,15 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.gjj.avgle.R;
+import com.gjj.avgle.adapter.VideoAdapter;
 import com.gjj.avgle.di.component.ActivityComponent;
 import com.gjj.avgle.net.model.VideoResponse;
 import com.gjj.avgle.ui.base.BaseFragment;
-import com.gjj.avgle.adapter.VideoAdapter;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
-import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
-import com.scwang.smartrefresh.layout.footer.BallPulseFooter;
-import com.scwang.smartrefresh.layout.header.BezierRadarHeader;
 
 import javax.inject.Inject;
 
@@ -69,15 +66,6 @@ public class SearchFragment extends BaseFragment implements SearchMvpView, Video
             videoAdapter.setCallback(this);
         }
         return view;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        //设置 Header 为 贝塞尔雷达 样式
-        refreshLayout.setRefreshHeader(new BezierRadarHeader(getContext()).setEnableHorizontalDrag(true));
-        //设置 Footer 为 球脉冲 样式
-        refreshLayout.setRefreshFooter(new BallPulseFooter(getContext()).setSpinnerStyle(SpinnerStyle.Scale));
     }
 
     @Override

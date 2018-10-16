@@ -37,9 +37,9 @@ import com.gjj.avgle.R;
 import com.gjj.avgle.ui.base.BaseActivity;
 import com.gjj.avgle.ui.custom.RoundedImageView;
 import com.gjj.avgle.ui.custom.SimpleSearchView;
+import com.gjj.avgle.ui.favorites.FavoriteFragment;
 import com.gjj.avgle.ui.search.SearchActivity;
 import com.gjj.avgle.ui.video.ContentFragment;
-import com.gjj.avgle.utils.FragmentUtils;
 
 import javax.inject.Inject;
 
@@ -53,8 +53,6 @@ import butterknife.ButterKnife;
 public class MainActivity extends BaseActivity implements MainMvpView {
 
     private Fragment currentFragment;
-
-    private FragmentManager fragmentManager;
 
     @Inject
     MainMvpPresenter<MainMvpView> mPresenter;
@@ -81,6 +79,9 @@ public class MainActivity extends BaseActivity implements MainMvpView {
 
     private ActionBarDrawerToggle mDrawerToggle;
 
+    private Fragment contentFragment, favoriteFragment;
+
+
     public static Intent getStartIntent(Context context) {
         Intent intent = new Intent(context, MainActivity.class);
         return intent;
@@ -93,7 +94,6 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         getActivityComponent().inject(this);
         setUnBinder(ButterKnife.bind(this));
         mPresenter.onAttach(this);
-        this.fragmentManager = getFragmentManager();
         setUp();
     }
 
@@ -156,7 +156,7 @@ public class MainActivity extends BaseActivity implements MainMvpView {
 
     @Override
     public void onFragmentDetached(String tag) {
-        android.app.FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         Fragment fragment = fragmentManager.findFragmentByTag(tag);
         if (fragment != null) {
             fragmentManager
@@ -167,24 +167,6 @@ public class MainActivity extends BaseActivity implements MainMvpView {
                     .commitNow();
             unlockDrawer();
         }
-    }
-
-    @Override
-    public void showVideoFragment() {
-        Fragment fragment = fragmentManager.findFragmentByTag(ContentFragment.TAG);
-        this.currentFragment = FragmentUtils.switchContent(fragmentManager, currentFragment, fragment, R.id.content, ContentFragment.TAG, false);
-    }
-
-    @Override
-    public void lockDrawer() {
-        if (mDrawer != null)
-            mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-    }
-
-    @Override
-    public void unlockDrawer() {
-        if (mDrawer != null)
-            mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
     }
 
     @Override
@@ -217,8 +199,9 @@ public class MainActivity extends BaseActivity implements MainMvpView {
     }
 
     private void initFragments() {
-        FragmentTransaction transaction = this.fragmentManager.beginTransaction();
-        ContentFragment contentFragment = ContentFragment.newInstance();
+        contentFragment = ContentFragment.newInstance();
+        favoriteFragment = FavoriteFragment.newInstance();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.add(R.id.content, contentFragment, ContentFragment.TAG);
         transaction.commit();
         this.currentFragment = contentFragment;
@@ -232,21 +215,27 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         mEmailTextView = headerLayout.findViewById(R.id.tv_email);
         //默认选择第一项
         MenuItem selectedItem = mNavigationView.getMenu().findItem(R.id.nav_home);
+        getSupportActionBar().setTitle(R.string.home);
         mNavigationView.setCheckedItem(selectedItem.getItemId());
         mNavigationView.setNavigationItemSelectedListener(
                 item -> {
                     mDrawer.closeDrawer(GravityCompat.START);
                     switch (item.getItemId()) {
                         case R.id.nav_home:
+                            getSupportActionBar().setTitle(R.string.home);
                             mPresenter.onDrawerHomeClick();
-                        case R.id.nav_released:
-                            mPresenter.onDrawerOptionAboutClick();
-                            return true;
-                        case R.id.nav_actresses:
-                            mPresenter.onDrawerRateUsClick();
                             return true;
                         case R.id.nav_favourite:
-                            mPresenter.onDrawerMyFeedClick();
+                            getSupportActionBar().setTitle(R.string.favorite);
+                            mPresenter.onDrawerCollectionClick();
+                            return true;
+                        case R.id.nav_released:
+                            getSupportActionBar().setTitle(R.string.home);
+                            mPresenter.onDrawerCollectionClick();
+                            return true;
+                        case R.id.nav_actresses:
+                            getSupportActionBar().setTitle(R.string.home);
+                            mPresenter.onDrawerRateUsClick();
                             return true;
                         default:
                             return false;
@@ -256,8 +245,34 @@ public class MainActivity extends BaseActivity implements MainMvpView {
 
 
     @Override
-    public void showRateUsDialog() {
-        //RateUsDialog.newInstance().show(getSupportFragmentManager());
+    public void showVideoFragment() {
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        if (!contentFragment.isAdded()) {
+            transaction.add(R.id.content, contentFragment, ContentFragment.TAG);
+        } else {
+            transaction.show(contentFragment);
+        }
+        if (currentFragment.isAdded()) {
+            transaction.hide(currentFragment);
+        }
+        transaction.commit();
+        this.currentFragment = contentFragment;
+    }
+
+
+    @Override
+    public void showFavoriteFragment() {
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        if (!favoriteFragment.isAdded()) {
+            transaction.add(R.id.content, favoriteFragment, ContentFragment.TAG);
+        } else {
+            transaction.show(favoriteFragment);
+        }
+        if (currentFragment.isAdded()) {
+            transaction.hide(currentFragment);
+        }
+        transaction.commit();
+        this.currentFragment = favoriteFragment;
     }
 
     @Override
@@ -271,5 +286,18 @@ public class MainActivity extends BaseActivity implements MainMvpView {
             mDrawer.closeDrawer(Gravity.START);
         }
     }
+
+    @Override
+    public void lockDrawer() {
+        if (mDrawer != null)
+            mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+    }
+
+    @Override
+    public void unlockDrawer() {
+        if (mDrawer != null)
+            mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+    }
+
 
 }

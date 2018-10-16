@@ -24,12 +24,12 @@ import com.gjj.avgle.ui.base.MvpPresenter;
 
 public interface MainMvpPresenter<V extends MainMvpView> extends MvpPresenter<V> {
 
-    void onDrawerOptionAboutClick();
+    void onDrawerHomeClick();
+
+    void onDrawerCollectionClick();
 
     void onDrawerRateUsClick();
 
     void onDrawerMyFeedClick();
-
-    void onDrawerHomeClick();
 
 }

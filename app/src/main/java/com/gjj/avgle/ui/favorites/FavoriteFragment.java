@@ -1,7 +1,6 @@
-package com.gjj.avgle.ui.video;
+package com.gjj.avgle.ui.favorites;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,7 +11,7 @@ import android.view.ViewGroup;
 import com.gjj.avgle.R;
 import com.gjj.avgle.adapter.VideoAdapter;
 import com.gjj.avgle.di.component.ActivityComponent;
-import com.gjj.avgle.net.model.VideoResponse;
+import com.gjj.avgle.net.model.AvgleResponse;
 import com.gjj.avgle.ui.base.BaseFragment;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
@@ -23,9 +22,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
-public class VideoFragment extends BaseFragment implements VideoMvpView, VideoAdapter.Callback {
+public class FavoriteFragment extends BaseFragment implements FavoriteMvpView, VideoAdapter.Callback {
 
-    public static final String TAG = "VideoFragment";
+    public static final String TAG = "FavoriteFragment";
 
     @Inject
     VideoAdapter videoAdapter;
@@ -40,30 +39,25 @@ public class VideoFragment extends BaseFragment implements VideoMvpView, VideoAd
     protected RefreshLayout refreshLayout;
 
     @Inject
-    VideoMvpPresenter<VideoMvpView> videoMvpPresenter;
+    FavoriteMvpPresenter<FavoriteMvpView> mvpPresenter;
 
-    /**
-     * 类别
-     */
-    private String c;
-
-    public static VideoFragment newInstance() {
+    public static FavoriteFragment newInstance() {
         Bundle args = new Bundle();
-        VideoFragment fragment = new VideoFragment();
+        FavoriteFragment fragment = new FavoriteFragment();
         fragment.setArguments(args);
         return fragment;
     }
 
+
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_video, container, false);
         ActivityComponent component = getActivityComponent();
         if (component != null) {
             component.inject(this);
             setUnBinder(ButterKnife.bind(this, view));
-            videoMvpPresenter.onAttach(this);
+            mvpPresenter.onAttach(this);
             videoAdapter.setCallback(this);
         }
         return view;
@@ -76,30 +70,21 @@ public class VideoFragment extends BaseFragment implements VideoMvpView, VideoAd
         animator.setAddDuration(300);
         mRecyclerView.setItemAnimator(animator);
         mRecyclerView.setAdapter(videoAdapter);
-        refreshLayout.setOnRefreshListener(refreshLayout -> videoMvpPresenter.refreshVideo(c));
+        refreshLayout.setOnRefreshListener(refreshLayout -> mvpPresenter.refreshVideo());
         refreshLayout.setOnLoadMoreListener(refreshLayout -> {
-            if (videoAdapter.getResponse() != null && videoAdapter.getResponse().isHas_more()) {
-                videoMvpPresenter.loadMoreVideo(videoAdapter.getResponse().getCurrent_offset() / 10 + 1, c);
+            if (videoAdapter.isHasMore()) {
+                mvpPresenter.loadMoreVideo(videoAdapter.getItemCount() / 10);
             } else {
                 finishLoadMore();
                 showMessage("暂无更多视频");
             }
         });
-        videoMvpPresenter.showVideo(c);
+        mvpPresenter.showVideo();
     }
-
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        if (videoMvpPresenter != null) {
-            videoMvpPresenter.refreshVideo(c);
-        }
-    }
-
 
     @Override
     public void onDestroyView() {
-        videoMvpPresenter.onDetach();
+        mvpPresenter.onDetach();
         super.onDestroyView();
     }
 
@@ -109,14 +94,16 @@ public class VideoFragment extends BaseFragment implements VideoMvpView, VideoAd
     }
 
     @Override
-    public void addResponse(VideoResponse response) {
-        videoAdapter.addItems(response.getResponse().getVideos());
-        videoAdapter.setResponse(response.getResponse());
+    public void addResponse(AvgleResponse response) {
+        videoAdapter.addItems(response.getVideos());
+        videoAdapter.setResponse(response);
     }
 
     @Override
     public void finishLoadMore() {
-        refreshLayout.finishLoadMore();
+        if (refreshLayout.getState() == RefreshState.Loading) {
+            refreshLayout.finishLoadMore();
+        }
     }
 
     @Override
@@ -129,7 +116,7 @@ public class VideoFragment extends BaseFragment implements VideoMvpView, VideoAd
     @Override
     public void onBlogEmptyViewRetryClick() {
         showLoading();
-        videoMvpPresenter.refreshVideo(c);
+        mvpPresenter.refreshVideo();
     }
 
     @Override
@@ -140,7 +127,4 @@ public class VideoFragment extends BaseFragment implements VideoMvpView, VideoAd
         refreshLayout.finishRefresh();
     }
 
-    public void setC(String c) {
-        this.c = c;
-    }
 }
