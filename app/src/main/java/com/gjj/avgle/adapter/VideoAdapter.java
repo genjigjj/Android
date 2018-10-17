@@ -23,7 +23,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -40,7 +39,6 @@ import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Created by Janisharali on 25-05-2017.
@@ -51,23 +49,16 @@ public class VideoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     public static final int VIEW_TYPE_EMPTY = 0;
     public static final int VIEW_TYPE_NORMAL = 1;
 
-    private Callback mCallback;
-
     private List<Video> videoList;
 
     private AvgleResponse response;
 
     private Context context;
 
-    private boolean hasMore = false;
-
     public VideoAdapter(List<Video> videoList) {
         this.videoList = videoList;
     }
 
-    public void setCallback(Callback callback) {
-        mCallback = callback;
-    }
 
     @Override
     public void onBindViewHolder(BaseViewHolder holder, int position) {
@@ -77,15 +68,8 @@ public class VideoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     @Override
     public BaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         this.context = parent.getContext();
-        switch (viewType) {
-            case VIEW_TYPE_NORMAL:
-                return new ViewHolder(
-                        LayoutInflater.from(parent.getContext()).inflate(R.layout.item_video_view, parent, false));
-            case VIEW_TYPE_EMPTY:
-            default:
-                return new EmptyViewHolder(
-                        LayoutInflater.from(parent.getContext()).inflate(R.layout.item_empty_view, parent, false));
-        }
+        return new ViewHolder(
+                LayoutInflater.from(parent.getContext()).inflate(R.layout.item_video_view, parent, false));
     }
 
     @Override
@@ -102,7 +86,7 @@ public class VideoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         if (videoList != null && videoList.size() > 0) {
             return videoList.size();
         } else {
-            return 1;
+            return 0;
         }
     }
 
@@ -110,19 +94,13 @@ public class VideoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         if (videoList != null && videoList.size() > 0) {
             int position = getItemCount();
             this.videoList.addAll(videoList);
-            notifyItemInserted(position);
-            hasMore = true;
-        } else {
-            hasMore = false;
+            notifyItemChanged(position);
+            notifyItemRangeChanged(position, videoList.size());
         }
     }
 
     public void reset() {
         this.videoList.clear();
-    }
-
-    public interface Callback {
-        void onBlogEmptyViewRetryClick();
     }
 
     public class ViewHolder extends BaseViewHolder {
@@ -182,31 +160,6 @@ public class VideoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         }
     }
 
-    public class EmptyViewHolder extends BaseViewHolder {
-
-        @BindView(R.id.btn_retry)
-        Button retryButton;
-
-        @BindView(R.id.tv_message)
-        TextView messageTextView;
-
-        public EmptyViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-        }
-
-        @Override
-        protected void clear() {
-
-        }
-
-        @OnClick(R.id.btn_retry)
-        void onRetryClick() {
-            if (mCallback != null)
-                mCallback.onBlogEmptyViewRetryClick();
-        }
-    }
-
     public AvgleResponse getResponse() {
         return response;
     }
@@ -215,7 +168,4 @@ public class VideoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         this.response = response;
     }
 
-    public boolean isHasMore() {
-        return hasMore;
-    }
 }

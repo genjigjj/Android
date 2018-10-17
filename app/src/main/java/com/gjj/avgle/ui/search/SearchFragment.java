@@ -23,7 +23,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
-public class SearchFragment extends BaseFragment implements SearchMvpView, VideoAdapter.Callback {
+public class SearchFragment extends BaseFragment implements SearchMvpView {
 
     public static final String TAG = "SearchFragment";
 
@@ -63,7 +63,6 @@ public class SearchFragment extends BaseFragment implements SearchMvpView, Video
             component.inject(this);
             setUnBinder(ButterKnife.bind(this, view));
             searchMvpPresenter.onAttach(this);
-            videoAdapter.setCallback(this);
         }
         return view;
     }
@@ -91,12 +90,6 @@ public class SearchFragment extends BaseFragment implements SearchMvpView, Video
     public void onDestroyView() {
         searchMvpPresenter.onDetach();
         super.onDestroyView();
-    }
-
-    @Override
-    public void onBlogEmptyViewRetryClick() {
-        showLoading();
-        searchMvpPresenter.refreshVideo(query);
     }
 
     @Override

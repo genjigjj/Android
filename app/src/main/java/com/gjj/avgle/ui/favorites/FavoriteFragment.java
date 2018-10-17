@@ -14,7 +14,6 @@ import com.gjj.avgle.di.component.ActivityComponent;
 import com.gjj.avgle.net.model.AvgleResponse;
 import com.gjj.avgle.ui.base.BaseFragment;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.constant.RefreshState;
 
 import javax.inject.Inject;
 
@@ -22,7 +21,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
-public class FavoriteFragment extends BaseFragment implements FavoriteMvpView, VideoAdapter.Callback {
+public class FavoriteFragment extends BaseFragment implements FavoriteMvpView {
 
     public static final String TAG = "FavoriteFragment";
 
@@ -58,7 +57,6 @@ public class FavoriteFragment extends BaseFragment implements FavoriteMvpView, V
             component.inject(this);
             setUnBinder(ButterKnife.bind(this, view));
             mvpPresenter.onAttach(this);
-            videoAdapter.setCallback(this);
         }
         return view;
     }
@@ -70,13 +68,15 @@ public class FavoriteFragment extends BaseFragment implements FavoriteMvpView, V
         animator.setAddDuration(300);
         mRecyclerView.setItemAnimator(animator);
         mRecyclerView.setAdapter(videoAdapter);
+        refreshLayout.setEnableAutoLoadMore(false);
+        refreshLayout.autoRefresh();
         refreshLayout.setOnRefreshListener(refreshLayout -> mvpPresenter.refreshVideo());
         refreshLayout.setOnLoadMoreListener(refreshLayout -> {
-            if (videoAdapter.isHasMore()) {
-                mvpPresenter.loadMoreVideo(videoAdapter.getItemCount() / 10);
-            } else {
+            if (videoAdapter.getItemCount() == videoAdapter.getResponse().getTotal_videos()) {
                 finishLoadMore();
                 showMessage("暂无更多视频");
+            } else {
+                mvpPresenter.loadMoreVideo(videoAdapter.getItemCount() / 10);
             }
         });
         mvpPresenter.showVideo();
@@ -101,22 +101,12 @@ public class FavoriteFragment extends BaseFragment implements FavoriteMvpView, V
 
     @Override
     public void finishLoadMore() {
-        if (refreshLayout.getState() == RefreshState.Loading) {
-            refreshLayout.finishLoadMore();
-        }
+        refreshLayout.finishLoadMore();
     }
 
     @Override
     public void finishRefresh() {
-        if (refreshLayout.getState() == RefreshState.Refreshing) {
-            refreshLayout.finishRefresh();
-        }
-    }
-
-    @Override
-    public void onBlogEmptyViewRetryClick() {
-        showLoading();
-        mvpPresenter.refreshVideo();
+        refreshLayout.finishRefresh();
     }
 
     @Override

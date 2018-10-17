@@ -19,7 +19,6 @@ public class VideoPresenter<V extends VideoMvpView> extends BasePresenter<V> imp
 
     @Override
     public void showVideo(String c) {
-        getMvpView().showLoading();
         getData(0, c);
     }
 
@@ -42,21 +41,18 @@ public class VideoPresenter<V extends VideoMvpView> extends BasePresenter<V> imp
                 .observeOn(getSchedulerProvider().ui())
                 .subscribe(response -> {
                     if (!isViewAttached()) {
-                        getMvpView().hideLoading();
                         return;
                     }
                     if (response != null && response.isSuccess()) {
                         Log.d("response", response.toString());
                         getMvpView().addResponse(response);
-                        getMvpView().finishRefresh();
                     }
-                    getMvpView().hideLoading();
+                    getMvpView().finishRefresh();
                 }, throwable -> {
                     if (!isViewAttached()) {
-                        getMvpView().hideLoading();
                         return;
                     }
-                    getMvpView().hideLoading();
+                    getMvpView().finishRefresh();
                     getMvpView().onError("网络错误");
                 }));
     }

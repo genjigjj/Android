@@ -26,7 +26,6 @@ public class FavoritePresenter<V extends FavoriteMvpView> extends BasePresenter<
 
     @Override
     public void showVideo() {
-        getMvpView().showLoading();
         getData(0);
     }
 
@@ -49,7 +48,6 @@ public class FavoritePresenter<V extends FavoriteMvpView> extends BasePresenter<
                 .observeOn(getSchedulerProvider().io())
                 .concatMap(collectionResponse -> {
                     if (!isViewAttached()) {
-                        getMvpView().hideLoading();
                         return null;
                     }
                     if (collectionResponse != null && collectionResponse.getStatus() == 1) {
@@ -79,7 +77,6 @@ public class FavoritePresenter<V extends FavoriteMvpView> extends BasePresenter<
                 .observeOn(getSchedulerProvider().ui())
                 .subscribe(response -> {
                     if (!isViewAttached()) {
-                        getMvpView().hideLoading();
                         return;
                     }
                     if (response != null) {
@@ -87,13 +84,11 @@ public class FavoritePresenter<V extends FavoriteMvpView> extends BasePresenter<
                         getMvpView().addResponse(response);
                     }
                     getMvpView().finishRefresh();
-                    getMvpView().hideLoading();
                 }, throwable -> {
                     if (!isViewAttached()) {
-                        getMvpView().hideLoading();
                         return;
                     }
-                    getMvpView().hideLoading();
+                    getMvpView().finishRefresh();
                     getMvpView().onError("网络错误");
                 }));
     }
